@@ -23,3 +23,34 @@ db.practice_class.find({
   $and: [{ age: { $gt: 30 }, "favorites.color": "green" }],
 });
 // **Task 5:** Count the number of users whose favorite movie is "The Shawshank Redemption."
+db.practice_class
+  .find({
+    "favorites.movie": "The Shawshank Redemption",
+  })
+  .count();
+// **Task 6:** Update the zipcode of the user with the email "**[johndoe@example.com](mailto:johndoe@example.com)**" to "10002".
+db.practice_class.updateOne(
+  { email: "johndoe@example.com" },
+  { $set: { "address.zipcode": "10002" } }
+);
+
+// **Task 7:** Delete the user with the email "**[alicewilliams@example.com](mailto:alicewilliams@example.com)**" from the user data.
+db.practice_class.deleteOne({ email: "alicewilliams@example.com" });
+
+// **Task 8**: Group users by their favorite movie and retrieve the average age in each movie group.
+db.practice_class.aggregate([
+  {
+    $group: {
+      _id: "$favorites.movie",
+      avgAge: { $avg: { $toInt: "$age" } },
+    },
+  },
+  {
+    $project: {
+      groupCountByMovie: "$_id",
+      avgAge: 1,
+      groupCount: { $sum: 1 },
+      _id: 0,
+    },
+  },
+]);
